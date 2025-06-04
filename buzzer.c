@@ -11,6 +11,8 @@
 // Configuração do pino do buzzer
 #define BUZZER_PIN 21
 
+#define FIRE_PIN 8
+
 // Configuração da frequência do buzzer (em Hz)
 #define BUZZER_FREQUENCY 100
 
@@ -135,8 +137,12 @@ int main() {
     // Inicializar o PWM no pino do buzzer
     pwm_init_buzzer(BUZZER_PIN);
 
+    // inicializar pino gpio usado para sinal
+    gpio_set_dir(FIRE_PIN, GPIO_IN);
+
     // Loop infinito
     while (true) {
+      //int is_fire = gpio_get(FIRE_PIN);
        play_music();
        sleep_ms(1000); 
     }
