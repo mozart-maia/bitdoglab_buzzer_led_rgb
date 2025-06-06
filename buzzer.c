@@ -1,8 +1,3 @@
-/**
- * Exemplo de acionamento de buzzer utilizando sinal PWM no GPIO 21 da Raspberry Pico / BitDog Lab
- * 06/12/2024
- */
-
 #include "pico/stdlib.h"
 #include "hardware/pwm.h"
 #include "hardware/clocks.h"
@@ -12,6 +7,7 @@
 #define BUZZER_PIN 21
 
 #define FIRE_PIN 8
+#define BUTTON_B 6
 
 // Configuração da frequência do buzzer (em Hz)
 #define BUZZER_FREQUENCY 100
@@ -31,11 +27,11 @@
 #define DO2 26400
 
 int melody[] = {
-  DO, RE, MI, FA, SOL, LA, SI, DO2, SI, LA, SOL, FA, MI, RE, DO, DO, MI, SOL, DO2, SOL, MI, DO
+  DO, DO
 };
 
 int durations[] = {
-  500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500
+  500, 500
 };
 
 void setup_led() {
@@ -112,6 +108,7 @@ void play_music() {
     // play_up_sound();
     printf("playing music...");
     const int pin = 21;
+    led_rgb_put(false, false, true);
     for (int i = 0; i < sizeof(melody) / sizeof(melody[0]); i++) {
       if (melody[i] == 0) {
         sleep_ms(durations[i]);
@@ -119,6 +116,7 @@ void play_music() {
         play_tone(pin, melody[i], durations[i]);
       }
     }
+    led_rgb_put(false, false, false);
     
 }
 
@@ -127,6 +125,12 @@ int main() {
     // Inicializar o sistema de saída padrão
     stdio_init_all();
     setup_led();
+
+    // usando o botao b para testar
+    // gpio_init(BUTTON_B);
+    // gpio_set_dir(BUTTON_B, GPIO_IN);
+    // gpio_pull_up(BUTTON_B);
+    //testando leds
     led_rgb_put(true, false, false);
     sleep_ms(500);
     led_rgb_put(false, true, false);
@@ -142,9 +146,18 @@ int main() {
 
     // Loop infinito
     while (true) {
-      //int is_fire = gpio_get(FIRE_PIN);
-       play_music();
-       sleep_ms(1000); 
+      int is_fire = gpio_get(FIRE_PIN);
+      // int state_b = gpio_get(BUTTON_B);
+      int state_b = 1;
+      // printf("state button: %d \n", state_b);
+      printf("state fire pin: %d \n", is_fire);
+      
+      //  
+       if (state_b == 0 || is_fire == 1){
+          play_music();                    
+       }
+       
+       sleep_ms(100); 
     }
     return 0;
 }
